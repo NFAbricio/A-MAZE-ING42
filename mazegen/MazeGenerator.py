@@ -6,6 +6,7 @@ from mazegen.generator import (dfs_generator,
                                check_open_areas,
                                break_walls,
                                add_42_logo)
+from utils.export_utils import export_maze
 
 class MazeGenerator:
     def __init__(self,
@@ -45,7 +46,7 @@ class MazeGenerator:
 
                 logo_pos = add_42_logo(maze)
                 if not logo_pos:
-                    print("The maze is not big enough do show the 42 logo")
+                    print("logo_pos(): The maze is not big enough do show the 42 logo")
 
                 if not self.perfect:
                     break_walls(maze, logo_pos)
@@ -60,4 +61,17 @@ class MazeGenerator:
         except (KeyError, Exception) as e:
             raise ValueError(f"generate_maze(): {e}")
 
-    def solve(self, algotihm: str) -> tuple[list[tuple[int, int]], list[tuple[int, int]]]:
+    def solve(self, algorithm: str) -> tuple[list[tuple[int, int]], list[tuple[int, int]]]:
+        if algorithm == "bfs":
+            path, explored = bfs_solve_maze(self.maze)
+        else:
+            raise ValueError("solve(): No algorthm found with that name")
+
+        self.path = path
+        self.explored = explored
+        return path, explored
+
+    def export(self, output_file: str) -> None:
+        #export information do txt file
+
+        export_maze(self.maze, self.path, output_file)
